@@ -17,10 +17,41 @@ time_table_drop = "DROP TABLE IF EXISTS time"
 
 # CREATE TABLES
 
-staging_events_table_create= ("""
+staging_events_table_create = ("""CREATE TABLE IF NOT EXISTS staging_events (
+                                    staging_event_id int IDENTITY(0,1),
+                                    artist varchar,
+                                    auth varchar,
+                                    firstName varchar,
+                                    gender varchar,
+                                    itemInSession int,
+                                    lastName varchar,
+                                    length decimal,
+                                    level varchar,
+                                    location varchar,
+                                    method varchar,
+                                    page varchar,
+                                    registration decimal,
+                                    sessionId int,
+                                    song varchar,
+                                    status int,
+                                    ts bigint,
+                                    userAgent varchar,
+                                    userId int
+                                    )
 """)
 
-staging_songs_table_create = ("""
+staging_songs_table_create = ("""CREATE TABLE IF NOT EXISTS staging_songs (
+                                    artist_id varchar,
+                                    artist_latitude decimal,
+                                    artist_location varchar,
+                                    artist_longitude decimal,
+                                    artist_name varchar,
+                                    duration decimal,
+                                    num_songs int,
+                                    song_id varchar PRIMARY KEY,
+                                    title varchar,
+                                    year int
+)
 """)
 
 songplay_table_create = ("""
