@@ -125,19 +125,55 @@ region '{}'
 
 # FINAL TABLES
 
-songplay_table_insert = ("""
+songplay_table_insert = ("""INSERT INTO songplays 
+(start_time, user_id, level, song_id, 
+artist_id, session_id,
+location, user_agent) 
+(
+SELECT se.ts, se.userId, se.level, ss.song_id, ss.artist_id, se.sessionId, se.location, se.userAgent 
+FROM staging_events se
+JOIN staging_songs ss
+ON se.song = ss.title
+)
 """)
 
-user_table_insert = ("""
+user_table_insert = ("""INSERT INTO users 
+(user_id, first_name, last_name, gender, level) 
+(
+SELECT distinct se.userId, se.firstName, se.lastName, se.gender, se.level
+FROM staging_events se
+WHERE se.userId IS NOT NULL
+ORDER BY se.ts desc
+)
 """)
 
-song_table_insert = ("""
+song_table_insert = ("""INSERT INTO songs 
+(song_id, title, artist_id, year, duration) 
+(
+SELECT distinct ss.song_id, ss.title, ss.artist_id, ss.year, ss.duration
+FROM staging_songs ss
+WHERE song_id IS NOT NULL
+) 
 """)
 
-artist_table_insert = ("""
+artist_table_insert = ("""INSERT INTO artists 
+(artist_id, name, location, latitude, longitude) 
+(
+SELECT distinct ss.artist_id, ss.artist_name, ss.artist_location, ss.artist_latitude, ss.artist_longitude
+FROM staging_songs ss
+WHERE artist_id IS NOT NULL
+)
 """)
 
-time_table_insert = ("""
+
+time_table_insert = ("""INSERT INTO time 
+(start_time, hour, day, week, month, year, weekday) 
+(
+SELECT se_ts_cnv.ts, EXTRACT(hour from se_ts_cnv.ts_cnv), EXTRACT(day from se_ts_cnv.ts_cnv), EXTRACT(week from se_ts_cnv.ts_cnv), EXTRACT(month from se_ts_cnv.ts_cnv), EXTRACT(year from se_ts_cnv.ts_cnv), EXTRACT(weekday from se_ts_cnv.ts_cnv)
+FROM (
+    SELECT ts, TIMESTAMP 'epoch' + ts/1000 * interval '1 second' AS ts_cnv FROM staging_events
+    WHERE staging_events.ts IS NOT NULL) se_ts_cnv
+)
 """)
 
 # QUERY LISTS
