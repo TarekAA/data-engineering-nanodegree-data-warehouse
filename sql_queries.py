@@ -108,10 +108,20 @@ songplay_table_create = ("""CREATE TABLE IF NOT EXISTS songplays (
 # STAGING TABLES
 
 staging_events_copy = ("""
-""").format()
+COPY staging_events
+FROM {}
+iam_role {}
+JSON {}
+region '{}'
+""").format(config['S3']['LOG_DATA'], config['IAM_ROLE']['ARN'], config['S3']['LOG_JSONPATH'], 'us-west-2')
 
 staging_songs_copy = ("""
-""").format()
+COPY staging_songs
+FROM {}
+iam_role {}
+JSON 'auto'
+region '{}'
+""").format(config['S3']['SONG_DATA'], config['IAM_ROLE']['ARN'], 'us-west-2')
 
 # FINAL TABLES
 
