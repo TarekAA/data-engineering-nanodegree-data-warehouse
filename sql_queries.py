@@ -54,19 +54,55 @@ staging_songs_table_create = ("""CREATE TABLE IF NOT EXISTS staging_songs (
 )
 """)
 
-songplay_table_create = ("""
+artist_table_create = ("""CREATE TABLE IF NOT EXISTS artists (
+                            artist_id varchar PRIMARY KEY,
+                            name varchar,
+                            location varchar,
+                            latitude decimal,
+                            longitude decimal
+                            )
 """)
 
-user_table_create = ("""
+time_table_create = ("""CREATE TABLE IF NOT EXISTS time (
+                            start_time bigint PRIMARY KEY,
+                            hour int,
+                            day int,
+                            week int,
+                            month int,
+                            year int,
+                            weekday int
+                            )
 """)
 
-song_table_create = ("""
+user_table_create = ("""CREATE TABLE IF NOT EXISTS users (
+                            user_id int PRIMARY KEY,
+                            first_name varchar,
+                            last_name varchar,
+                            gender varchar,
+                            level varchar
+                            )
 """)
 
-artist_table_create = ("""
+song_table_create = ("""CREATE TABLE IF NOT EXISTS songs (
+                            song_id varchar PRIMARY KEY,
+                            title varchar,
+                            artist_id varchar NOT NULL REFERENCES artists (artist_id),
+                            year int,
+                            duration decimal
+                            )
 """)
 
-time_table_create = ("""
+songplay_table_create = ("""CREATE TABLE IF NOT EXISTS songplays (
+                                songplay_id int IDENTITY(0,1) PRIMARY KEY,
+                                start_time bigint NOT NULL REFERENCES time (start_time),
+                                user_id int NOT NULL REFERENCES users (user_id),
+                                level varchar,
+                                song_id varchar REFERENCES songs (song_id),
+                                artist_id varchar REFERENCES artists (artist_id),
+                                session_id int,
+                                location varchar,
+                                user_agent varchar
+                                )
 """)
 
 # STAGING TABLES
